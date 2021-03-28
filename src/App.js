@@ -2,11 +2,10 @@ import React, { useEffect, useState, useRef } from "react";
 import "./App.css";
 import * as tf from "@tensorflow/tfjs";
 import * as speech from "@tensorflow-models/speech-commands";
-
-// Draw Ball
 import { drawBall } from "./utilities";
 
 const App = () => {
+
   // Create model and action states
   const [model, setModel] = useState(null);
   const [action, setAction] = useState(null);
@@ -31,38 +30,25 @@ const App = () => {
   useEffect(() => {
     loadModel();
   }, []);
-
-  // Update ball state
-  const numberMap = {
-    "zero":0,
-    "one": 1,
-    "two": 2,
-    "three": 3    
-  };
-
   useEffect(() => {
+
     // Update position x,y
     const update =
-      action=="up"
-        ? setY(y-10)
-        : action=="down"
-        ? setY(y+10)
-        : action=="left"
-        ? setX(x-10)
-        : action=="right"
+      action === "up"
+        ? setY(y - 10)
+        : action === "down"
+        ? setY(y + 10)
+        : action === "left"
+        ? setX(x - 10)
+        : action === "right"
         ? setX(x + 10)
         : "";
-    // Update size r
-    if (Object.keys(numberMap).includes(action)) {
-      setR(10 * numberMap[action]);
-    }
-
     canvasRef.current.width = 600;
     canvasRef.current.height = 600;
     const ctx = canvasRef.current.getContext("2d");
     console.log(x, y, r);
     drawBall(ctx, x, y, r);
-    setAction('base');
+    setAction("base");
   }, [action]);
 
   // Listen for Actions
@@ -74,12 +60,10 @@ const App = () => {
     console.log("Listening for commands");
     model.listen(
       (result) => {
-        // console.log(labels[argMax(Object.values(result.scores))])
-        setAction(labels[argMax(Object.values(result.scores))]);
+      setAction(labels[argMax(Object.values(result.scores))]);
       },
       { includeSpectrogram: true, probabilityThreshold: 0.9 }
     );
-    // setTimeout(()=>model.stopListening(), 10e3)
   };
 
   return (
